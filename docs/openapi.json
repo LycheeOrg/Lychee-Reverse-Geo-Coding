@@ -1,0 +1,106 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lychee Reverse Geo Coding",
+    "description": "Self-hosted reverse geocoding service exposing a Nominatim `/reverse`-jsonv2-compatible endpoint, backed by data embedded in the binary via authenticvision/rgeo (Natural Earth country/province/city polygons). No outbound network calls, no rate limits, no API key.",
+    "version": "1.0.0",
+    "license": { "name": "MIT", "url": "https://github.com/LycheeOrg/Lychee-Reverse-Geo-Coding/blob/master/LICENSE" }
+  },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/reverse": {
+      "get": {
+        "summary": "Reverse geocode a coordinate",
+        "description": "Resolves a latitude/longitude pair to country/province/city level detail. Mirrors the subset of Nominatim's `/reverse?format=jsonv2` contract that geocoder-php/nominatim-provider (used by Lychee) reads.",
+        "operationId": "reverseGeocode",
+        "parameters": [
+          { "name": "lat", "in": "query", "required": true, "description": "Latitude in decimal degrees (-90 to 90).", "schema": { "type": "number", "format": "double" } },
+          { "name": "lon", "in": "query", "required": true, "description": "Longitude in decimal degrees (-180 to 180).", "schema": { "type": "number", "format": "double" } },
+          { "name": "zoom", "in": "query", "required": false, "description": "Detail level, 0-18 (default 18). zoom < 10 drops city, zoom < 6 also drops province/state. rgeo never resolves finer than city, so higher zoom values return the same detail as 18.", "schema": { "type": "integer", "minimum": 0, "maximum": 18, "default": 18 } },
+          { "name": "format", "in": "query", "required": false, "description": "Accepted for Nominatim compatibility; the response is always jsonv2-shaped.", "schema": { "type": "string", "default": "jsonv2" } },
+          { "name": "addressdetails", "in": "query", "required": false, "description": "Accepted for Nominatim compatibility; the address object is always included.", "schema": { "type": "integer", "enum": [0, 1], "default": 1 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "A resolved location, or a Nominatim-style `{\"error\": ...}` body if the coordinate isn't within range of any landmass (e.g. open ocean).",
+            "content": {
+              "application/json": {
+                "schema": { "oneOf": [{ "$ref": "#/components/schemas/ReverseResponse" }, { "$ref": "#/components/schemas/ErrorResponse" }] },
+                "examples": {
+                  "resolved": {
+                    "value": {
+                      "place_id": 7225951201003745782,
+                      "licence": "Data from naturalearthdata.com (public domain), reverse geocoded locally by rgeo. Not affiliated with or sourced from OpenStreetMap.",
+                      "lat": "48.8566000",
+                      "lon": "2.3522000",
+                      "display_name": "Paris, Paris, France",
+                      "address": { "city": "Paris", "state": "Paris", "country": "France", "country_code": "fr" },
+                      "boundingbox": ["48.8115550", "48.9016450", "2.3071550", "2.3972450"]
+                    }
+                  },
+                  "notFound": { "value": { "error": "Unable to geocode" } }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid `lat`/`lon`.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "operationId": "health",
+        "responses": { "200": { "description": "Service is up." } }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "This OpenAPI document",
+        "operationId": "openapiSpec",
+        "responses": { "200": { "description": "The OpenAPI 3.0 spec for this service.", "content": { "application/json": {} } } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "description": "Fields Nominatim would return but rgeo cannot resolve (road, house_number, postcode, suburb, ...) are always omitted.",
+        "properties": {
+          "city": { "type": "string" },
+          "state": { "type": "string" },
+          "country": { "type": "string" },
+          "country_code": { "type": "string", "description": "Lowercase ISO 3166-1 alpha-2." }
+        }
+      },
+      "ReverseResponse": {
+        "type": "object",
+        "required": ["place_id", "licence", "lat", "lon", "display_name", "address", "boundingbox"],
+        "properties": {
+          "place_id": { "type": "integer", "format": "int64", "description": "Deterministic id synthesized from the resolved location, stable across repeated lookups of the same place." },
+          "licence": { "type": "string" },
+          "lat": { "type": "string" },
+          "lon": { "type": "string" },
+          "display_name": { "type": "string" },
+          "address": { "$ref": "#/components/schemas/Address" },
+          "boundingbox": {
+            "type": "array",
+            "description": "[south, north, west, east], approximated around the query point since rgeo doesn't expose the matched polygon's extent.",
+            "items": { "type": "string" },
+            "minItems": 4,
+            "maxItems": 4
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": { "error": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+services:
+  geo-decoding:
+    build: .
+    # image: ghcr.io/yourname/geo-decoding-server:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    # No volumes needed: rgeo's Natural Earth datasets are embedded in the binary.
