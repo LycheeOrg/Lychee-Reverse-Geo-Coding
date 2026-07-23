@@ -4,13 +4,26 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      direct-dependencies:
+        dependency-type: "direct"
+      indirect-dependencies:
+        dependency-type: "indirect"
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    groups:
+      docker-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
