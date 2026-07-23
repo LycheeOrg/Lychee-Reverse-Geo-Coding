@@ -5,10 +5,9 @@ updates:
     schedule:
       interval: weekly
     groups:
-      direct-dependencies:
-        dependency-type: "direct"
-      indirect-dependencies:
-        dependency-type: "indirect"
+      go-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: docker
     directory: /
