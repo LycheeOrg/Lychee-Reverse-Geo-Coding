@@ -4,7 +4,7 @@
     "title": "Lychee Reverse Geo Coding",
     "description": "Self-hosted reverse geocoding service exposing a Nominatim `/reverse`-jsonv2-compatible endpoint, backed by data embedded in the binary via authenticvision/rgeo (Natural Earth country/province/city polygons). No outbound network calls, no rate limits, no API key.",
     "version": "1.0.0",
-    "license": { "name": "MIT", "url": "https://github.com/LycheeOrg/Lychee-Reverse-Geo-Coding/blob/master/LICENSE" }
+    "license": { "name": "MIT", "url": "https://github.com/LycheeOrg/Lychee-Reverse-Geo-Coding/blob/main/LICENSE" }
   },
   "servers": [{ "url": "/" }],
   "paths": {

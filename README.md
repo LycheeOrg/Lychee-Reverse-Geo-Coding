@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/LycheeOrg/Lychee-Reverse-Geo-Coding/actions/workflows/ci.yml/badge.svg)](https://github.com/LycheeOrg/Lychee-Reverse-Geo-Coding/actions/workflows/ci.yml)
 [![OpenSSF Scorecard][ossf-shield]](https://securityscorecards.dev/viewer/?uri=github.com/LycheeOrg/Lychee-Reverse-Geo-Coding)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/2855/badge)](https://www.bestpractices.dev/projects/2855)
 
 Self-hosted reverse geocoding service exposing a Nominatim-`/reverse`-compatible
 endpoint, backed entirely by data embedded in the binary via
