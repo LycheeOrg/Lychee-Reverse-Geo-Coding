@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/authenticvision/rgeo v1.4.0
 	github.com/gin-gonic/gin v1.12.0
-	github.com/twpayne/go-geom v1.5.4
+	github.com/twpayne/go-geom v1.6.1
 )
 
 require (
