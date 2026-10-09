@@ -1,11 +1,11 @@
 module github.com/LycheeOrg/Lychee-Reverse-Geo-Coding
 
-go 1.26.0
+go 1.26.3
 
 require (
 	github.com/authenticvision/rgeo v1.4.0
 	github.com/gin-gonic/gin v1.12.0
-	github.com/twpayne/go-geom v1.6.1
+	github.com/twpayne/go-geom v1.7.0
 )
 
 require (
